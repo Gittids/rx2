@@ -1,0 +1,226 @@
+local Players = game:GetService("Players")
+local CoreGui = game:GetService("CoreGui")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+
+local Theme = {
+    BG = Color3.fromRGB(12, 16, 32),
+    Top = Color3.fromRGB(14, 18, 36),
+    Accent = Color3.fromRGB(0, 170, 255),
+    Stroke = Color3.fromRGB(45, 75, 120),
+    Text = Color3.fromRGB(235, 245, 255),
+    SubText = Color3.fromRGB(150, 170, 200),
+    Danger = Color3.fromRGB(255, 60, 60)
+}
+
+local function corner(obj, r)
+    local c = Instance.new("UICorner")
+    c.CornerRadius = UDim.new(0, r or 8)
+    c.Parent = obj
+end
+
+local function stroke(obj)
+    local s = Instance.new("UIStroke")
+    s.Color = Theme.Stroke
+    s.Transparency = 0.5
+    s.Thickness = 1
+    s.Parent = obj
+end
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "XyloHub"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.IgnoreGuiInset = true
+ScreenGui.Parent = CoreGui
+
+local Dim = Instance.new("Frame")
+Dim.Size = UDim2.new(1, 0, 1, 0)
+Dim.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Dim.BackgroundTransparency = 0.45
+Dim.Parent = ScreenGui
+
+local Main = Instance.new("Frame")
+Main.Size = UDim2.new(0, 520, 0, 330)
+Main.Position = UDim2.new(0.5, -260, 0.5, -165)
+Main.BackgroundColor3 = Theme.BG
+Main.Active = true
+Main.Draggable = true
+Main.Parent = ScreenGui
+
+corner(Main, 12)
+stroke(Main)
+
+-- TOP
+local Top = Instance.new("Frame")
+Top.Size = UDim2.new(1, 0, 0, 50)
+Top.BackgroundColor3 = Theme.Top
+Top.Parent = Main
+corner(Top, 12)
+
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, -60, 1, 0)
+Title.Position = UDim2.new(0, 12, 0, 0)
+Title.BackgroundTransparency = 1
+Title.Text = "XYLOHUB v5.4.1 REMASTERED"
+Title.TextColor3 = Theme.Text
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 16
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.Parent = Top
+
+-- CLOSE
+local CloseBtn = Instance.new("TextButton")
+CloseBtn.Size = UDim2.new(0, 22, 0, 22)
+CloseBtn.Position = UDim2.new(1, -30, 0.5, -11)
+CloseBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
+CloseBtn.Text = "X"
+CloseBtn.TextColor3 = Color3.fromRGB(255,255,255)
+CloseBtn.Font = Enum.Font.GothamBold
+CloseBtn.TextSize = 12
+CloseBtn.Parent = Top
+corner(CloseBtn, 6)
+
+CloseBtn.MouseButton1Click:Connect(function()
+    ScreenGui:Destroy()
+end)
+
+-- BODY
+local Body = Instance.new("Frame")
+Body.Size = UDim2.new(1, 0, 1, -50)
+Body.Position = UDim2.new(0, 0, 0, 50)
+Body.BackgroundTransparency = 1
+Body.Parent = Main
+
+-- PAGES
+local Pages = Instance.new("Frame")
+Pages.Size = UDim2.new(1, 0, 1, 0)
+Pages.BackgroundTransparency = 1
+Pages.Parent = Body
+
+local current
+
+local function switch(page)
+    if current == page then return end
+    current = page
+
+    for _,v in pairs(Pages:GetChildren()) do
+        if v:IsA("Frame") then
+            v.Visible = false
+        end
+    end
+
+    page.Visible = true
+    page.Position = UDim2.new(0, 0, 0, 0)
+end
+
+-- TAB BAR
+local TabBar = Instance.new("Frame")
+TabBar.Size = UDim2.new(0, 120, 1, 0)
+TabBar.BackgroundColor3 = Color3.fromRGB(10, 14, 28)
+TabBar.Parent = Pages
+
+local PageHolder = Instance.new("Frame")
+PageHolder.Size = UDim2.new(1, -120, 1, 0)
+PageHolder.Position = UDim2.new(0, 120, 0, 0)
+PageHolder.BackgroundTransparency = 1
+PageHolder.Parent = Pages
+
+local function tab(name, page)
+    local b = Instance.new("TextButton")
+    b.Size = UDim2.new(1, 0, 0, 40)
+    b.BackgroundColor3 = Color3.fromRGB(15, 20, 40)
+    b.Text = name
+    b.TextColor3 = Theme.Text
+    b.Font = Enum.Font.GothamBold
+    b.TextSize = 13
+    b.Parent = TabBar
+    corner(b, 6)
+
+    b.MouseButton1Click:Connect(function()
+        switch(page)
+    end)
+end
+
+-- HOME PAGE
+local Home = Instance.new("Frame")
+Home.Size = UDim2.new(1, 0, 1, 0)
+Home.BackgroundTransparency = 1
+Home.Parent = PageHolder
+
+local HomeText = Instance.new("TextLabel")
+HomeText.Size = UDim2.new(1, 0, 0, 40)
+HomeText.Position = UDim2.new(0, 0, 0.2, 0)
+HomeText.BackgroundTransparency = 1
+HomeText.Text = "HOME"
+HomeText.TextColor3 = Theme.Text
+HomeText.Font = Enum.Font.GothamBold
+HomeText.TextSize = 22
+HomeText.Parent = Home
+
+-- MAIN PAGE
+local MainPage = Instance.new("Frame")
+MainPage.Size = UDim2.new(1, 0, 1, 0)
+MainPage.BackgroundTransparency = 1
+MainPage.Parent = PageHolder
+MainPage.Visible = false
+
+local MainTitle = Instance.new("TextLabel")
+MainTitle.Size = UDim2.new(1, 0, 0, 40)
+MainTitle.Position = UDim2.new(0, 0, 0.2, 0)
+MainTitle.BackgroundTransparency = 1
+MainTitle.Text = "MAIN"
+MainTitle.TextColor3 = Theme.Text
+MainTitle.Font = Enum.Font.GothamBold
+MainTitle.TextSize = 22
+MainTitle.Parent = MainPage
+
+-- FAKE BAN SCREEN (SAFE)
+local function fakeBan()
+    local ban = Instance.new("Frame")
+    ban.Size = UDim2.new(1, 0, 1, 0)
+    ban.BackgroundColor3 = Color3.fromRGB(10, 0, 0)
+    ban.Parent = MainPage
+
+    local t = Instance.new("TextLabel")
+    t.Size = UDim2.new(1, 0, 0, 60)
+    t.Position = UDim2.new(0, 0, 0.4, 0)
+    t.BackgroundTransparency = 1
+    t.Text = "SYSTEM BLOCKED"
+    t.TextColor3 = Theme.Danger
+    t.Font = Enum.Font.GothamBold
+    t.TextSize = 28
+    t.Parent = ban
+
+    local s = Instance.new("TextLabel")
+    s.Size = UDim2.new(1, 0, 0, 30)
+    s.Position = UDim2.new(0, 0, 0.5, 0)
+    s.BackgroundTransparency = 1
+    s.Text = "Action denied by security system"
+    s.TextColor3 = Color3.fromRGB(200, 200, 200)
+    s.Font = Enum.Font.Gotham
+    s.TextSize = 14
+    s.Parent = ban
+end
+
+-- BUTTON
+local Btn = Instance.new("TextButton")
+Btn.Size = UDim2.new(0.6, 0, 0, 45)
+Btn.Position = UDim2.new(0.2, 0, 0.5, 0)
+Btn.BackgroundColor3 = Color3.fromRGB(20, 25, 45)
+Btn.Text = "Insta farm - Anti-Anticheat"
+Btn.TextColor3 = Theme.Text
+Btn.Font = Enum.Font.GothamBold
+Btn.TextSize = 14
+Btn.Parent = MainPage
+corner(Btn, 8)
+stroke(Btn)
+
+Btn.MouseButton1Click:Connect(function()
+    fakeBan()
+end)
+
+-- TABS
+tab("HOME", Home)
+tab("MAIN", MainPage)
+
+switch(Home)
